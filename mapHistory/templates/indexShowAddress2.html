@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <style>
+         /* Always set the map height explicitly to define the size of the div
+         element that contains the map. */
+         #map {
+             height: 100%;
+         }
+         /* Optional: Makes the sample page fill the window. */
+         html, body {
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+    </style>
+<title>Google Maps Multiple Markers</title>
+<script
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW-LxWC1ML0a6FbUzgC6ExKfh6xrb8oZM" type="text/javascript"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">	
+<!--include the jQuery library-->
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>		
+<!--include the highcharts library-->
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+
+
+
+</head>
+<body>
+    <div id="map" ></div>
+    <script type="text/javascript">
+        /*var locations = [ '1961 East Mall Vancouver BC', '2366 Main Mall Vancouver BC', '2053 Main Mall, Vancouver, BC ' ];*/
+        //var locations2 = [];
+        var locations = [];
+
+
+        /*
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom : 14,
+            center : new google.maps.LatLng(24.1209446, 120.6742369),
+            mapTypeId : google.maps.MapTypeId.ROADMAP
+        });
+        */
+
+        var infowindow = new google.maps.InfoWindow;
+
+
+        var marker;
+        var i;
+        var myCenter = { lat: 24.1209446, lng: 120.6742369 };
+
+        $(document).ready(function() {
+            initMap();
+            //initialize();
+        });
+        
+
+
+        function initMap() {
+            geocoder = new google.maps.Geocoder();
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: myCenter,
+                title: '中興大學',
+                zoom: 8
+            });
+            var data = {{address|safe}};
+            getDataSuccess(data)    
+        }
+
+        function getDataSuccess(data) {        
+            for (i = 0; i < data.id.length; i++) {    
+                //locations.push(data[i].toString());  
+                locations.push(data.address[i].toString());              
+            }
+            //alert(data);
+            initialize2();
+            //locations = locations2;
+            //alert(locations2);
+        }
+
+
+
+
+        function initialize2(){
+            setMarkers(map,locations);
+        }
+
+        function setMarkers(map, address) {
+            for ( var i = 0; i < address.length; i++) {
+                setMarker(map, address[i])
+            }
+        }
+
+        function setMarker(map, address) {
+            var html = '<div id="con"; style="width:598.6722px;height:370px;"></div>';
+            geocoder = new google.maps.Geocoder();
+            geocoder
+                    .geocode(
+                            {
+                                'address' : address
+                            },
+                            function(results, status) {
+                                if (status == google.maps.GeocoderStatus.OK) {
+                                    map.setCenter(results[0].geometry.location);
+                                    var marker = new google.maps.Marker(
+                                            {
+                                                position : results[0].geometry.location,
+                                                map : map
+                                            });
+                                    
+                                    google.maps.event.addListener(marker,
+                                            "click", function() {
+                                                
+                                                initialize(address);
+                                                infowindow.setContent("123");
+                                                infowindow.setContent(html);
+                                                infowindow.open(map, marker);
+                                                
+                                            });
+                                } else {
+                                    //alert("Geocode was not successful for the following reason: "
+                                     //       + status);
+                                }
+                        function initialize(address)
+                        {	
+                            //alert(address)
+                            $.get("/ajax/",{'username':address}, function(data){
+                          
+                                getDataSuccess2(data)
+                                //alert(data.time.length)
+                                //for (i = 0; i < data.time.length; i++) {    
+                                //    alert(data.address[i].toString());              
+                                //}                              
+                            })                        
+
+                        }
+
+             
+                        function getDataSuccess2(data)	//接收成功後要執行的動作
+                        {	
+                            //alert("123456");
+                            //alert(data);
+                            //infowindow.setContent("456789");
+                            
+                            
+                            //infowindow.setContent("html");
+                            $('#con').empty();             
+                            var val = []; //用以存放光敏電阻值
+                            var stime = []; //用以存放sample time
+                            var dataNum = data.time.length; //資料筆數
+                            for (var i = 0; i<dataNum; i++)
+                            {
+                                val.push(parseInt(data.value[i]));//將每筆光敏值放入陣列val中
+                                stime.push(data.time[i].toString());//將每筆光敏值的時間放入陣列stime中
+                            }
+                            var ads = data.address[0].toString(); //地址
+                            //highcharts 圖表設定
+                            //alert("123456789101112");
+                            
+                            $('#con').highcharts({//在#con中放入highcharts圖表物件
+                                title: {//標題
+                                    text: '光度變化'
+                                },
+                                subtitle: {//副標題
+                                    text: ads
+                                },
+                                scrollbar: {//使圖表可以捲動
+                                    enabled: true
+                                },
+                                chart: {
+                                    type: 'spline',
+                                    zoomType: 'x'//使圖表可以zoom
+                                },
+                                xAxis: {//x軸設定
+                                    tickInterval: 1,
+                                    labels: {
+                                        enabled: true,
+                                        formatter: function(){//以sample time作為x軸的label
+                                            return stime[this.value];
+                                            }
+                                    }
+                                },
+                                yAxis: {//y軸設定
+                                    title: {
+                                        text: 'light value'
+                                    }
+                                },					
+                                series: [//資料來源
+                                    {							
+                                        name: 'light',
+                                        data: val						
+                                    }
+                                ],
+                                tooltip: {//按下資料點後顯示的內容
+                                        formatter: function()
+                                        {
+                                            return '<b>' + stime[this.x] + '</b><br><li>'+this.series.name+': <b>' + this.y + '</b></li>';
+                                        }
+                                    },
+                                plotOptions: {//圖形的設定
+                                    spline: {
+                                        lineWidth: 3,
+                                        states: {
+                                            hover: {
+                                                lineWidth: 5
+                                            }
+                                        },
+                                        marker: {
+                                            enabled: true
+                                        }							
+                                    }
+                                }
+                               
+                            });                            
+                            
+                        }
+
+                      });
+        }
+    </script>
+</body>
+</html>
