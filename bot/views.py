@@ -12,8 +12,8 @@ import requests, json
 
 # 這邊是Linebot的授權TOKEN
 
-line_bot_api = LineBotApi('BG0rpVvnFUw+bf/210EnJI8yUGUOJYvEWBP2FdNixTucirGQOxrH4mUkIkbUMDr8byGaA75gvDNGzujfyjvUlcTSg43XtumLwySa1or4gjXreFnWLJSLFUhzskS+uIlH6JVmO5j3viis+fx574bcYAdB04t89/1O/w1cDnyilFU=')
-parser = WebhookParser('529bcfe640c19c10681b0b9efac4934d')
+line_bot_api = LineBotApi('token')
+parser = WebhookParser('secret')
 
 
 @csrf_exempt
@@ -46,7 +46,7 @@ def callback(request):
 
 def get_answer(message_text):
     
-    url = "https://iotproject1.azurewebsites.net/qnamaker/knowledgebases/f069e634-0e13-4614-b722-305603d53090/generateAnswer"
+    url = "url"
 
 
     # 發送request到QnAMaker Endpoint要答案
@@ -54,8 +54,8 @@ def get_answer(message_text):
                    url,
                    json.dumps({'question': message_text}),
                    headers={
-                       'Content-Type': 'application/json',
-                       'Authorization': 'EndpointKey 528db17a-4c12-487e-8fec-cfe5bb3521c1'
+                       'Content-Type': 'type',
+                       'Authorization': 'auth'
                    }
                )
 

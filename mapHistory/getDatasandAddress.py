@@ -3,7 +3,7 @@
 import  pymysql 
 
 def getData():
-	conn  =  pymysql.connect(host = '140.120.13.163' ,user = 'test123' ,passwd = "test123" ,db = 'iot',charset='utf8' ) 
+	conn  =  pymysql.connect(host = '140.120.13.163' ,user = 'uesr' ,passwd = "passwd" ,db = 'db',charset='utf8' ) 
 	cur  =  conn.cursor()  
 	cur . execute( "SELECT * FROM light" ) 
 	result = cur.fetchall() 
@@ -17,7 +17,7 @@ def getData():
 	return dic1
 	
 def getAddress():
-	conn  =  pymysql.connect(host = '127.0.0.1' ,user = 'test123' ,passwd = "test123" ,db = 'historymap',charset='utf8' ) 
+	conn  =  pymysql.connect(host = '127.0.0.1' ,user = 'user' ,passwd = "passwd" ,db = 'db',charset='utf8' ) 
 	cur  =  conn.cursor ()  
 	cur . execute( "SELECT * FROM topic where inquired = 1" ) 
 	result = cur.fetchall() 
@@ -30,7 +30,7 @@ def getAddress():
 	return dic2
 
 def ajax2(username):
-    conn  =  pymysql.connect(host = '127.0.0.1' ,user = 'test123' ,passwd = "test123" ,db = 'historymap',charset='utf8' ) 
+    conn  =  pymysql.connect(host = '127.0.0.1' ,user = 'user' ,passwd = "passwd" ,db = 'db',charset='utf8' ) 
     cur  =  conn.cursor ()
     cur . execute( "SELECT * FROM topic where site = %s and inquired = 1 ",username ) 
     result = cur.fetchall()

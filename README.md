@@ -1,1 +1,1 @@
-"# Practicing Git" 
+以Django作為Linebot&網頁的框架，且Linebot與QnAMaker結合
